@@ -660,6 +660,57 @@ func (w *Writer) WriteMessages(ctx context.Context, msgs ...Message) error {
 	return werr
 }
 
+// WriteMessageGroup writes a group of messages to the kafka topic configured on this
+// writer, and message group does not contain messages for different kafka topic.
+//
+// The method blocks until all messages have been written, or until the maximum number of
+// attempts was reached.
+//
+// When the method returns an error, it may be of type kafka.WriteError to allow
+// the caller to determine the status of each message.
+func (w *Writer) WriteMessageGroup(msgs ...Message) error {
+	if w.Addr == nil {
+		return errors.New("kafka.(*Writer).WriteMessages: cannot create a kafka writer with a nil address")
+	}
+
+	if !w.enter() {
+		return io.ErrClosedPipe
+	}
+	defer w.leave()
+
+	if len(msgs) == 0 {
+		return nil
+	}
+
+	balancer := w.balancer()
+
+	ctx, cancel := context.WithTimeout(context.Background(), w.writeTimeout())
+	defer cancel()
+
+	numPartitions, err := w.partitions(ctx, w.Topic)
+	if err != nil {
+		return err
+	}
+
+	partition := balancer.Balance(msgs[0], loadCachedPartitions(numPartitions)...)
+
+	pr, err := w.client(w.writeTimeout()).Produce(ctx, &ProduceRequest{
+		Partition:    partition,
+		Topic:        w.Topic,
+		RequiredAcks: w.RequiredAcks,
+		Compression:  w.Compression,
+		Records: &writerRecords{
+			msgs: msgs,
+		},
+	})
+
+	if pr.Error != nil {
+		return pr.Error
+	}
+
+	return err
+}
+
 func (w *Writer) batchMessages(messages []Message, assignments map[topicPartition][]int32) map[*writeBatch][]int32 {
 	var batches map[*writeBatch][]int32
 	if !w.Async {
