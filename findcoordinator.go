@@ -7,7 +7,7 @@ import (
 	"net"
 	"time"
 
-	"github.com/segmentio/kafka-go/protocol/findcoordinator"
+	"github.com/PerchSecurity/kafka-go/protocol/findcoordinator"
 )
 
 // CoordinatorKeyType is used to specify the type of coordinator to look for.

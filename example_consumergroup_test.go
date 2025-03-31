@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/segmentio/kafka-go"
+	"github.com/PerchSecurity/kafka-go"
 )
 
 func ExampleGeneration_Start_consumerGroupParallelReaders() {

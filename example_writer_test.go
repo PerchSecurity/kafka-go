@@ -3,7 +3,7 @@ package kafka_test
 import (
 	"context"
 
-	"github.com/segmentio/kafka-go"
+	"github.com/PerchSecurity/kafka-go"
 )
 
 func ExampleWriter() {

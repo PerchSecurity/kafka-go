@@ -1,7 +1,7 @@
 package listgroups
 
 import (
-	"github.com/segmentio/kafka-go/protocol"
+	"github.com/PerchSecurity/kafka-go/protocol"
 )
 
 func init() {

@@ -7,7 +7,7 @@ import (
 	"os"
 
 	"github.com/mongodb/mongo-go-driver/mongo"
-	kafka "github.com/segmentio/kafka-go"
+	kafka "github.com/PerchSecurity/kafka-go"
 )
 
 func getMongoCollection(mongoURL, dbName, collectionName string) *mongo.Collection {

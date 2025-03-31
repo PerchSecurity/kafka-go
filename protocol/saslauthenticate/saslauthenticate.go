@@ -4,7 +4,7 @@ import (
 	"encoding/binary"
 	"io"
 
-	"github.com/segmentio/kafka-go/protocol"
+	"github.com/PerchSecurity/kafka-go/protocol"
 )
 
 func init() {

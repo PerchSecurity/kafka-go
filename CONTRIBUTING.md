@@ -19,7 +19,7 @@ the problem to the maintainers.
 When reporting the issue, please provide the version of kafka-go, what version(s) of Kafka 
 are you testing against, and your operating system.
 
- - [kafka-go Issues segmentio/kafka-go](https://github.com/segmentio/kafka-go/issues)
+ - [kafka-go Issues segmentio/kafka-go](https://github.com/PerchSecurity/kafka-go/issues)
 
 ## Submitting Patches
 
@@ -68,7 +68,7 @@ We use Go Modules support built into Go 1.11 to build.  The easiest way is to cl
 ```bash
 mkdir $HOME/src
 cd $HOME/src
-git clone https://github.com/segmentio/kafka-go.git
+git clone https://github.com/PerchSecurity/kafka-go.git
 cd kafka-go
 go build ./...
 ```
@@ -114,7 +114,7 @@ To replace the original version of kafka-go library with a forked version is acc
 
     require (
         ...
-        github.com/segmentio/kafka-go v1.2.3
+        github.com/PerchSecurity/kafka-go v1.2.3
         ...
     )
     ```
@@ -124,11 +124,11 @@ To replace the original version of kafka-go library with a forked version is acc
     ```bash
     module github.com/myusername/myapp
 
-    replace github.com/segmentio/kafka-go v1.2.3 => ../local/directory
+    replace github.com/PerchSecurity/kafka-go v1.2.3 => ../local/directory
 
     require (
         ...
-        github.com/segmentio/kafka-go v1.2.3
+        github.com/PerchSecurity/kafka-go v1.2.3
         ...
     )
     ```
