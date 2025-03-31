@@ -6,7 +6,7 @@ import (
 	"net"
 	"time"
 
-	"github.com/segmentio/kafka-go/protocol/describeclientquotas"
+	"github.com/PerchSecurity/kafka-go/protocol/describeclientquotas"
 )
 
 // DescribeClientQuotasRequest represents a request sent to a kafka broker to

@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"os"
 
-	kafka "github.com/segmentio/kafka-go"
+	kafka "github.com/PerchSecurity/kafka-go"
 )
 
 func producerHandler(kafkaWriter *kafka.Writer) func(http.ResponseWriter, *http.Request) {

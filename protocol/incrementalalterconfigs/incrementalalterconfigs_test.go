@@ -3,8 +3,8 @@ package incrementalalterconfigs_test
 import (
 	"testing"
 
-	"github.com/segmentio/kafka-go/protocol"
-	"github.com/segmentio/kafka-go/protocol/incrementalalterconfigs"
+	"github.com/PerchSecurity/kafka-go/protocol"
+	"github.com/PerchSecurity/kafka-go/protocol/incrementalalterconfigs"
 )
 
 const (

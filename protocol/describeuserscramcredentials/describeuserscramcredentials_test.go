@@ -3,8 +3,8 @@ package describeuserscramcredentials_test
 import (
 	"testing"
 
-	"github.com/segmentio/kafka-go/protocol/describeuserscramcredentials"
-	"github.com/segmentio/kafka-go/protocol/prototest"
+	"github.com/PerchSecurity/kafka-go/protocol/describeuserscramcredentials"
+	"github.com/PerchSecurity/kafka-go/protocol/prototest"
 )
 
 const (

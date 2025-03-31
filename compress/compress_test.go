@@ -16,13 +16,13 @@ import (
 	"time"
 
 	gz "github.com/klauspost/compress/gzip"
-	"github.com/segmentio/kafka-go"
-	pkg "github.com/segmentio/kafka-go/compress"
-	"github.com/segmentio/kafka-go/compress/gzip"
-	"github.com/segmentio/kafka-go/compress/lz4"
-	"github.com/segmentio/kafka-go/compress/snappy"
-	"github.com/segmentio/kafka-go/compress/zstd"
-	ktesting "github.com/segmentio/kafka-go/testing"
+	"github.com/PerchSecurity/kafka-go"
+	pkg "github.com/PerchSecurity/kafka-go/compress"
+	"github.com/PerchSecurity/kafka-go/compress/gzip"
+	"github.com/PerchSecurity/kafka-go/compress/lz4"
+	"github.com/PerchSecurity/kafka-go/compress/snappy"
+	"github.com/PerchSecurity/kafka-go/compress/zstd"
+	ktesting "github.com/PerchSecurity/kafka-go/testing"
 )
 
 func init() {

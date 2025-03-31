@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/segmentio/kafka-go/protocol"
-	ktesting "github.com/segmentio/kafka-go/testing"
+	"github.com/PerchSecurity/kafka-go/protocol"
+	ktesting "github.com/PerchSecurity/kafka-go/testing"
 )
 
 func TestClientRawProduce(t *testing.T) {

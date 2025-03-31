@@ -8,7 +8,7 @@ import (
 	"errors"
 	"regexp"
 
-	"github.com/segmentio/kafka-go"
+	"github.com/PerchSecurity/kafka-go"
 )
 
 // List returns a slice of all the Topics.

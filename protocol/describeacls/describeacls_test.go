@@ -3,8 +3,8 @@ package describeacls_test
 import (
 	"testing"
 
-	"github.com/segmentio/kafka-go/protocol/describeacls"
-	"github.com/segmentio/kafka-go/protocol/prototest"
+	"github.com/PerchSecurity/kafka-go/protocol/describeacls"
+	"github.com/PerchSecurity/kafka-go/protocol/prototest"
 )
 
 const (

@@ -6,7 +6,7 @@ import (
 	"io"
 	"time"
 
-	"github.com/segmentio/kafka-go/compress"
+	"github.com/PerchSecurity/kafka-go/compress"
 )
 
 // This file defines builders to assist in creating kafka payloads for unit testing.
