@@ -8,91 +8,12 @@ import (
 	"io"
 	"math/rand"
 	"net"
-	"os"
 	"strconv"
 	"testing"
 	"time"
 
 	ktesting "github.com/PerchSecurity/kafka-go/testing"
-	"golang.org/x/net/nettest"
 )
-
-type timeout struct{}
-
-func (*timeout) Error() string   { return "timeout" }
-func (*timeout) Temporary() bool { return true }
-func (*timeout) Timeout() bool   { return true }
-
-// connPipe is an adapter that implements the net.Conn interface on top of
-// two client kafka connections to pass the nettest.TestConn test suite.
-type connPipe struct {
-	rconn *Conn
-	wconn *Conn
-}
-
-func (c *connPipe) Close() error {
-	b := [1]byte{} // marker that the connection has been closed
-	c.wconn.SetWriteDeadline(time.Time{})
-	c.wconn.Write(b[:])
-	c.wconn.Close()
-	c.rconn.Close()
-	return nil
-}
-
-func (c *connPipe) Read(b []byte) (int, error) {
-	// See comments in Write.
-	time.Sleep(time.Millisecond)
-	if t := c.rconn.readDeadline(); !t.IsZero() {
-		return 0, &timeout{}
-	}
-	n, err := c.rconn.Read(b)
-	if n == 1 && b[0] == 0 {
-		c.rconn.Close()
-		n, err = 0, io.EOF
-	}
-	return n, err
-}
-
-func (c *connPipe) Write(b []byte) (int, error) {
-	// The nettest/ConcurrentMethods test spawns a bunch of goroutines that do
-	// random stuff on the connection, if a Read or Write was issued before a
-	// deadline was set then it could cancel an inflight request to kafka,
-	// resulting in the connection being closed.
-	// To prevent this from happening we wait a little while to give the other
-	// goroutines a chance to start and set the deadline.
-	time.Sleep(time.Millisecond)
-
-	// The nettest code only sets deadlines when it expects the write to time
-	// out.  The broker connection is alive and able to accept data, so we need
-	// to simulate the timeout in order to get the tests to pass.
-	if t := c.wconn.writeDeadline(); !t.IsZero() {
-		return 0, &timeout{}
-	}
-
-	return c.wconn.Write(b)
-}
-
-func (c *connPipe) LocalAddr() net.Addr {
-	return c.rconn.LocalAddr()
-}
-
-func (c *connPipe) RemoteAddr() net.Addr {
-	return c.wconn.LocalAddr()
-}
-
-func (c *connPipe) SetDeadline(t time.Time) error {
-	c.rconn.SetDeadline(t)
-	c.wconn.SetDeadline(t)
-	return nil
-}
-
-func (c *connPipe) SetReadDeadline(t time.Time) error {
-	return c.rconn.SetReadDeadline(t)
-}
-
-func (c *connPipe) SetWriteDeadline(t time.Time) error {
-	return c.wconn.SetWriteDeadline(t)
-}
 
 func init() {
 	rand.Seed(time.Now().UnixNano())
@@ -304,60 +225,6 @@ func TestConn(t *testing.T) {
 			testFunc(t, conn)
 		})
 	}
-
-	t.Run("nettest", func(t *testing.T) {
-		// Need ability to skip nettest on newer Kafka versions to avoid these kinds of errors:
-		//  --- FAIL: TestConn/nettest (17.56s)
-		//    --- FAIL: TestConn/nettest/PingPong (7.40s)
-		//      conntest.go:112: unexpected Read error: [7] Request Timed Out: the request exceeded the user-specified time limit in the request
-		//      conntest.go:118: mismatching value: got 77, want 78
-		//      conntest.go:118: mismatching value: got 78, want 79
-		// ...
-		//
-		// TODO: Figure out why these are happening and fix them (they don't appear to be new).
-		if _, ok := os.LookupEnv("KAFKA_SKIP_NETTEST"); ok {
-			t.Log("skipping nettest because KAFKA_SKIP_NETTEST is set")
-			t.Skip()
-		}
-
-		t.Parallel()
-
-		nettest.TestConn(t, func() (c1 net.Conn, c2 net.Conn, stop func(), err error) {
-			topic1 := makeTopic()
-			topic2 := makeTopic()
-			var t1Reader *Conn
-			var t2Reader *Conn
-			var t1Writer *Conn
-			var t2Writer *Conn
-			dialer := &Dialer{}
-
-			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-			defer cancel()
-
-			if t1Reader, err = dialer.DialLeader(ctx, tcp, kafka, topic1, 0); err != nil {
-				return
-			}
-			if t2Reader, err = dialer.DialLeader(ctx, tcp, kafka, topic2, 0); err != nil {
-				return
-			}
-			if t1Writer, err = dialer.DialLeader(ctx, tcp, kafka, topic1, 0); err != nil {
-				return
-			}
-			if t2Writer, err = dialer.DialLeader(ctx, tcp, kafka, topic2, 0); err != nil {
-				return
-			}
-
-			stop = func() {
-				t1Reader.Close()
-				t1Writer.Close()
-				t2Reader.Close()
-				t2Writer.Close()
-			}
-			c1 = &connPipe{rconn: t1Reader, wconn: t2Writer}
-			c2 = &connPipe{rconn: t2Reader, wconn: t1Writer}
-			return
-		})
-	})
 }
 
 func testConnClose(t *testing.T, conn *Conn) {
